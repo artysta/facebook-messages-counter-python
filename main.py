@@ -27,6 +27,7 @@ def count_messages(phrase):
                     names_to_messages['Messages Count'] += 1
                     names_to_messages[sender_name] = names_to_messages[sender_name] + 1
             else:
+                names_to_messages['Messages Count'] += 1
                 names_to_messages[sender_name] = 1
 
     return names_to_messages
