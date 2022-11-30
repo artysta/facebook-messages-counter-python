@@ -4,7 +4,7 @@ import os
 def get_percent(number, total_number):
     return round(number / total_number * 100, 2)
 
-def count_all_messages():
+def count_messages(phrase):
     names_to_messages = {}
     total_number_of_messages = 0
 
@@ -18,10 +18,11 @@ def count_all_messages():
 
         for message in messages:
             sender_name = message['sender_name']
-            total_number_of_messages += 1
 
             if sender_name in names_to_messages:
-                names_to_messages[sender_name] = names_to_messages[sender_name] + 1
+                if (phrase == '') or (phrase != '' and 'content' in message and phrase in message['content'].lower()):
+                    total_number_of_messages += 1
+                    names_to_messages[sender_name] = names_to_messages[sender_name] + 1
             else:
                 names_to_messages[sender_name] = 0
         
@@ -30,4 +31,4 @@ def count_all_messages():
     for k, v in names_to_messages.items():
         print(f'{k} napisał {v} ({get_percent(v, total_number_of_messages)}%) wiadomości.')
 
-count_all_messages()
+count_messages('')
