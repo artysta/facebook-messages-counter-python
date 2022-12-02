@@ -11,11 +11,11 @@ def count_messages(phrase):
 
     names_to_messages = { 'Messages Count': 0 }
 
-    for filename in os.listdir('./'):
-        if '.json' not in filename:
+    for file_name in os.listdir('./'):
+        if '.json' not in file_name:
             continue
         
-        file = open(filename, 'r')
+        file = open(file_name, 'r')
         data_json = json.load(file)
         messages = data_json['messages']
 
@@ -29,6 +29,8 @@ def count_messages(phrase):
             else:
                 names_to_messages['Messages Count'] += 1
                 names_to_messages[sender_name] = 1
+
+    file.close()
 
     return names_to_messages
 
