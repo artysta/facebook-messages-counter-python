@@ -61,14 +61,10 @@ def count_and_display():
 
     result_box.configure(state='disabled')
 
-# --- GUI SETUP ---
-
 window = tk.Tk()
 window.title("Facebook Message Analyzer (Dark Mode)")
 window.geometry("720x500")
 window.configure(bg="#2e2e2e")
-
-# --- DARK MODE STYLE ---
 
 style = ttk.Style()
 style.theme_use("clam")
@@ -87,7 +83,6 @@ style.map("TButton", background=[("active", "#45a049")])
 main_frame = ttk.Frame(window, padding=20)
 main_frame.pack(fill=tk.BOTH, expand=True)
 
-# Phrase input
 phrase_label = ttk.Label(main_frame, text="Enter a phrase to search (optional):")
 phrase_label.grid(row=0, column=0, sticky=tk.W)
 
@@ -97,7 +92,6 @@ phrase_entry.grid(row=0, column=1, padx=10, pady=5)
 count_button = ttk.Button(main_frame, text="Count", command=count_and_display)
 count_button.grid(row=0, column=2, padx=10)
 
-# Results box (manually styled for dark mode)
 result_box = scrolledtext.ScrolledText(main_frame, wrap=tk.WORD, width=80, height=20, font=("Courier New", 10),
                                        bg=dark_panel, fg=light_text, insertbackground=light_text)
 result_box.grid(row=1, column=0, columnspan=3, pady=20)
