@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import ttk
 from tkinter import scrolledtext
 import json
 import os
@@ -45,41 +46,61 @@ def count_and_display():
     phrase = phrase_entry.get().strip().lower()
     result = count_messages(phrase)
 
-    if 'error' in result:
-        result_box.delete('1.0', tk.END)
-        result_box.insert(tk.END, result['error'])
-        return
-
-    total = result['Messages Count']
-    output = f"Total number of messages: {total}\n\n"
-    for name, count in result.items():
-        if name != 'Messages Count':
-            output += f"{name}: {count} messages ({get_percent(count, total)}%)\n"
-
+    result_box.configure(state='normal')
     result_box.delete('1.0', tk.END)
-    result_box.insert(tk.END, output)
+
+    if 'error' in result:
+        result_box.insert(tk.END, result['error'])
+    else:
+        total = result['Messages Count']
+        output = f"Total number of messages: {total}\n\n"
+        for name, count in result.items():
+            if name != 'Messages Count':
+                output += f"{name}: {count} messages ({get_percent(count, total)}%)\n"
+        result_box.insert(tk.END, output)
+
+    result_box.configure(state='disabled')
+
+# --- GUI SETUP ---
 
 window = tk.Tk()
-window.title("Facebook Message Analyzer")
+window.title("Facebook Message Analyzer (Dark Mode)")
+window.geometry("720x500")
+window.configure(bg="#2e2e2e")
 
-screen_width = window.winfo_screenwidth()
-screen_height = window.winfo_screenheight()
-width = screen_width // 2
-height = screen_height // 2
-x = screen_width // 4
-y = screen_height // 4
-window.geometry(f"{width}x{height}+{x}+{y}")
+# --- DARK MODE STYLE ---
 
-phrase_label = tk.Label(window, text="Enter a phrase (optional):", font=("Arial", 14))
-phrase_label.pack(pady=5)
+style = ttk.Style()
+style.theme_use("clam")
 
-phrase_entry = tk.Entry(window, font=("Arial", 14), width=40)
-phrase_entry.pack(pady=5)
+dark_bg = "#2e2e2e"
+dark_panel = "#3a3a3a"
+light_text = "#ffffff"
+accent_color = "#4caf50"
 
-count_button = tk.Button(window, text="Count", font=("Arial", 16), command=count_and_display)
-count_button.pack(pady=10)
+style.configure("TFrame", background=dark_bg)
+style.configure("TLabel", background=dark_bg, foreground=light_text, font=("Segoe UI", 12))
+style.configure("TEntry", fieldbackground=dark_panel, foreground=light_text, font=("Segoe UI", 12))
+style.configure("TButton", background=accent_color, foreground=light_text, font=("Segoe UI", 12, "bold"))
+style.map("TButton", background=[("active", "#45a049")])
 
-result_box = scrolledtext.ScrolledText(window, wrap=tk.WORD, width=60, height=15, font=("Courier New", 12))
-result_box.pack(pady=10)
+main_frame = ttk.Frame(window, padding=20)
+main_frame.pack(fill=tk.BOTH, expand=True)
+
+# Phrase input
+phrase_label = ttk.Label(main_frame, text="Enter a phrase to search (optional):")
+phrase_label.grid(row=0, column=0, sticky=tk.W)
+
+phrase_entry = ttk.Entry(main_frame, width=40)
+phrase_entry.grid(row=0, column=1, padx=10, pady=5)
+
+count_button = ttk.Button(main_frame, text="Count", command=count_and_display)
+count_button.grid(row=0, column=2, padx=10)
+
+# Results box (manually styled for dark mode)
+result_box = scrolledtext.ScrolledText(main_frame, wrap=tk.WORD, width=80, height=20, font=("Courier New", 10),
+                                       bg=dark_panel, fg=light_text, insertbackground=light_text)
+result_box.grid(row=1, column=0, columnspan=3, pady=20)
+result_box.configure(state='disabled')
 
 window.mainloop()
