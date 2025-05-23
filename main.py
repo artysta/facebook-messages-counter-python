@@ -3,6 +3,7 @@ from tkinter import ttk
 from tkinter import scrolledtext
 import json
 import os
+import matplotlib.pyplot as plt
 
 def get_percent(number, total_number):
     return round(number / total_number * 100, 2)
@@ -42,9 +43,13 @@ def count_messages(phrase):
 
     return sender_message_counts
 
+last_result = {}
+
 def count_and_display():
+    global last_result
     phrase = phrase_entry.get().strip().lower()
     result = count_messages(phrase)
+    last_result = result
 
     result_box.configure(state='normal')
     result_box.delete('1.0', tk.END)
@@ -61,9 +66,26 @@ def count_and_display():
 
     result_box.configure(state='disabled')
 
+def show_chart():
+    if not last_result or 'Messages Count' not in last_result or last_result['Messages Count'] == 0:
+        tk.messagebox.showinfo("Info", "No data to display. Please run the count first.")
+        return
+
+    names = [k for k in last_result if k != 'Messages Count']
+    counts = [last_result[k] for k in names]
+
+    plt.figure(figsize=(10,6))
+    plt.bar(names, counts, color='skyblue')
+    plt.xticks(rotation=45, ha='right')
+    plt.xlabel('Sender')
+    plt.ylabel('Number of messages')
+    plt.title('Number of Messages by Sender')
+    plt.tight_layout()
+    plt.show()
+
 window = tk.Tk()
 window.title("Facebook Message Analyzer (Dark Mode)")
-window.geometry("720x500")
+window.geometry("720x550")
 window.configure(bg="#2e2e2e")
 
 style = ttk.Style()
@@ -92,9 +114,12 @@ phrase_entry.grid(row=0, column=1, padx=10, pady=5)
 count_button = ttk.Button(main_frame, text="Count", command=count_and_display)
 count_button.grid(row=0, column=2, padx=10)
 
-result_box = scrolledtext.ScrolledText(main_frame, wrap=tk.WORD, width=80, height=20, font=("Courier New", 10),
+chart_button = ttk.Button(main_frame, text="Show Chart", command=show_chart)
+chart_button.grid(row=0, column=3, padx=10)
+
+result_box = scrolledtext.ScrolledText(main_frame, wrap=tk.WORD, width=85, height=20, font=("Courier New", 10),
                                        bg=dark_panel, fg=light_text, insertbackground=light_text)
-result_box.grid(row=1, column=0, columnspan=3, pady=20)
+result_box.grid(row=1, column=0, columnspan=4, pady=20)
 result_box.configure(state='disabled')
 
 window.mainloop()
