@@ -9,3 +9,5 @@
 > ```python
 > py main.py
 > ```
+
+![Screenshot](./screenshot-1.png)
